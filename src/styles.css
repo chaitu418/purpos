@@ -1,0 +1,112 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #1d1d1f;
+  background: #f8f7f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24px clamp(24px, 7vw, 112px);
+  background:
+    radial-gradient(circle at 90% 10%, #ffe7bc 0, transparent 24rem),
+    #f8f7f4;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  color: #1d1d1f;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  text-decoration: none;
+}
+
+.beta,
+.eyebrow {
+  color: #7b5630;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.hero {
+  max-width: 780px;
+  padding: 140px 0 80px;
+}
+
+.hero h1 {
+  max-width: 650px;
+  margin: 16px 0;
+  font-size: clamp(52px, 8vw, 96px);
+  line-height: 0.98;
+  letter-spacing: -5px;
+}
+
+.subtitle {
+  max-width: 590px;
+  color: #5e5a55;
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.primary,
+.secondary {
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-weight: 700;
+}
+
+.primary {
+  border: 1px solid #1d1d1f;
+  background: #1d1d1f;
+  color: white;
+}
+
+.secondary {
+  border: 1px solid #c9c4bd;
+  background: transparent;
+  color: #1d1d1f;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 24px;
+  }
+
+  .hero {
+    padding-top: 100px;
+  }
+
+  .hero h1 {
+    letter-spacing: -2.5px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+  }
+}
