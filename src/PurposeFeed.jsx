@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { getPurposes } from "./api.js";
+import { createConnectionRequest, getPurposes } from "./api.js";
 
 export default function PurposeFeed({ onBack }) {
   const [purposes, setPurposes] = useState([]);
   const [requestedIds, setRequestedIds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [submittingId, setSubmittingId] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -22,8 +23,24 @@ export default function PurposeFeed({ onBack }) {
     loadPurposes();
   }, []);
 
-  function requestConnection(id) {
-    setRequestedIds([...requestedIds, id]);
+  async function requestConnection(targetPurposeId) {
+    const requesterName = window.prompt("Enter your name to send this request:");
+
+    if (!requesterName?.trim()) {
+      return;
+    }
+
+    setError("");
+    setSubmittingId(targetPurposeId);
+
+    try {
+      await createConnectionRequest(requesterName.trim(), targetPurposeId);
+      setRequestedIds([...requestedIds, targetPurposeId]);
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setSubmittingId("");
+    }
   }
 
   return (
@@ -43,7 +60,6 @@ export default function PurposeFeed({ onBack }) {
         </p>
 
         {isLoading && <p className="subtitle">Loading purposes…</p>}
-
         {error && <p className="form-error">{error}</p>}
 
         {!isLoading && !error && purposes.length === 0 && (
@@ -56,6 +72,7 @@ export default function PurposeFeed({ onBack }) {
         <div className="purpose-grid">
           {purposes.map((person, index) => {
             const requested = requestedIds.includes(person.id);
+            const isSubmitting = submittingId === person.id;
             const match = Math.max(72, 92 - index * 6);
 
             return (
@@ -73,10 +90,14 @@ export default function PurposeFeed({ onBack }) {
                   <span>{person.timeframe}</span>
                   <button
                     className={requested ? "requested-button" : "secondary"}
-                    disabled={requested}
+                    disabled={requested || isSubmitting}
                     onClick={() => requestConnection(person.id)}
                   >
-                    {requested ? "Request sent" : "Request connection"}
+                    {requested
+                      ? "Request sent"
+                      : isSubmitting
+                        ? "Sending..."
+                        : "Request connection"}
                   </button>
                 </div>
               </article>

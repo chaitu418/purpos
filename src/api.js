@@ -1,4 +1,3 @@
-
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
 
@@ -23,6 +22,28 @@ export async function getPurposes() {
 
   if (!response.ok) {
     throw new Error("Unable to load purposes. Please refresh the page.");
+  }
+
+  return response.json();
+}
+
+export async function createConnectionRequest(
+  requesterName,
+  targetPurposeId,
+) {
+  const response = await fetch(`${API_BASE_URL}/api/connection-requests`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      requester_name: requesterName,
+      target_purpose_id: targetPurposeId,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to send the connection request. Please try again.");
   }
 
   return response.json();

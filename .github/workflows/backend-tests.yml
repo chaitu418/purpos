@@ -1,0 +1,42 @@
+name: Backend tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: purpos
+          POSTGRES_USER: purpos
+          POSTGRES_PASSWORD: purpos_dev_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U purpos -d purpos"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+psycopg://purpos:purpos_dev_password@127.0.0.1:5432/purpos
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependencies
+        run: pip install -r backend/requirements-dev.txt
+
+      - name: Run backend tests
+        run: pytest backend/tests -v
