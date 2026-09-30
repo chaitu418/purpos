@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: purpos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: purpos
+      POSTGRES_USER: purpos
+      POSTGRES_PASSWORD: purpos_dev_password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U purpos -d purpos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: purpos-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://purpos:purpos_dev_password@db:5432/purpos
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    container_name: purpos-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

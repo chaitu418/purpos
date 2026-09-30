@@ -270,3 +270,13 @@ button {
   font-weight: 700;
   padding: 9px 13px;
 }
+.form-error {
+  color: #a12622;
+  font-weight: 700;
+  margin: 0;
+}
+
+.primary:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}

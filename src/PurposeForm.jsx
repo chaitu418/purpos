@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPurpose } from "./api.js";
 
 export default function PurposeForm({ onBack, onPublish }) {
   const [form, setForm] = useState({
@@ -8,6 +9,8 @@ export default function PurposeForm({ onBack, onPublish }) {
     timeframe: "This month",
     budget: "Not decided",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   function updateField(event) {
     setForm({
@@ -16,9 +19,19 @@ export default function PurposeForm({ onBack, onPublish }) {
     });
   }
 
-  function submitForm(event) {
+  async function submitForm(event) {
     event.preventDefault();
-    onPublish(form);
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const savedPurpose = await createPurpose(form);
+      onPublish(savedPurpose);
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -68,6 +81,7 @@ export default function PurposeForm({ onBack, onPublish }) {
               onChange={updateField}
               placeholder="For example, I am looking for a technical co-founder for a local business-matching platform."
               rows="5"
+              minLength="10"
               required
             />
           </label>
@@ -96,8 +110,10 @@ export default function PurposeForm({ onBack, onPublish }) {
             </select>
           </label>
 
-          <button className="primary" type="submit">
-            Publish my purpose
+          {error && <p className="form-error">{error}</p>}
+
+          <button className="primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Publishing..." : "Publish my purpose"}
           </button>
         </form>
       </section>
